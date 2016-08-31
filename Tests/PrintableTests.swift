@@ -53,12 +53,22 @@ class PrintableTests: XCTestCase {
         XCTAssertEqual(jsonNil_2.description, "null")
         XCTAssertEqual(jsonNil_2.debugDescription, "null")
     }
-    
+
     func testArray() {
         let json:JSON = [1,2,"4",5,"6"]
         var description = json.description.replacingOccurrences(of: "\n", with: "")
         description = description.replacingOccurrences(of: " ", with: "")
         XCTAssertEqual(description, "[1,2,\"4\",5,\"6\"]")
+        XCTAssertTrue(json.description.lengthOfBytes(using: String.Encoding.utf8) > 0)
+        XCTAssertTrue(json.debugDescription.lengthOfBytes(using: String.Encoding.utf8) > 0)
+    }
+
+    func testArrayWithStrings() {
+        let array = ["\"123\""]
+        let json = JSON(array)
+        var description = json.description.replacingOccurrences(of: "\n", with: "")
+        description = description.replacingOccurrences(of: " ", with: "")
+        XCTAssertEqual(description, "[\"\\\"123\\\"\"]")
         XCTAssertTrue(json.description.lengthOfBytes(using: String.Encoding.utf8) > 0)
         XCTAssertTrue(json.debugDescription.lengthOfBytes(using: String.Encoding.utf8) > 0)
     }
@@ -72,7 +82,7 @@ class PrintableTests: XCTestCase {
         XCTAssertTrue(json.description.lengthOfBytes(using: String.Encoding.utf8) > 0)
         XCTAssertTrue(json.debugDescription.lengthOfBytes(using: String.Encoding.utf8) > 0)
     }
-    
+
     func testDictionary() {
         let json:JSON = ["1":2,"2":"two", "3":3]
         var debugDescription = json.debugDescription.replacingOccurrences(of: "\n", with: "")
@@ -81,6 +91,16 @@ class PrintableTests: XCTestCase {
         XCTAssertTrue(debugDescription.range(of: "\"1\":2", options: NSString.CompareOptions.caseInsensitive) != nil)
         XCTAssertTrue(debugDescription.range(of: "\"2\":\"two\"", options: NSString.CompareOptions.caseInsensitive) != nil)
         XCTAssertTrue(debugDescription.range(of: "\"3\":3", options: NSString.CompareOptions.caseInsensitive) != nil)
+    }
+
+    func testDictionaryWithStrings() {
+        let dict = ["foo":"{\"bar\":123}"] as [String : Any]
+        let json = JSON(dict)
+        var debugDescription = json.debugDescription.replacingOccurrences(of: "\n", with: "")
+        debugDescription = debugDescription.replacingOccurrences(of: " ", with: "")
+        XCTAssertTrue(json.description.lengthOfBytes(using: String.Encoding.utf8) > 0)
+        let exceptedResult = "{\"foo\":\"{\\\"bar\\\":123}\"}"
+        XCTAssertEqual(debugDescription, exceptedResult)
     }
 
     func testDictionaryWithOptionals() {

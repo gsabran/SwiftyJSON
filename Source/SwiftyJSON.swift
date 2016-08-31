@@ -539,7 +539,7 @@ extension JSON: Swift.RawRepresentable {
                         throw NSError(domain: ErrorDomain, code: ErrorInvalidJSON, userInfo: [NSLocalizedDescriptionKey: "Could not serialize nested JSON"])
                     }
                     if nestedValue.type == .string {
-                        return "\"\(key)\": \"\(nestedString)\""
+                        return "\"\(key)\": \"\(nestedString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\""
                     } else {
                         return "\"\(key)\": \(nestedString)"
                     }
@@ -564,7 +564,7 @@ extension JSON: Swift.RawRepresentable {
                         throw NSError(domain: ErrorDomain, code: ErrorInvalidJSON, userInfo: [NSLocalizedDescriptionKey: "Could not serialize nested JSON"])
                     }
                     if nestedValue.type == .string {
-                        return "\"\(nestedString)\""
+                        return "\"\(nestedString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\""
                     } else {
                         return nestedString
                     }
